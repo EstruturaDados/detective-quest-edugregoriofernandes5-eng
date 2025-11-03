@@ -43,9 +43,11 @@ void explorarSalas(Sala *atual) {
             break;
         }
 
-        printf("Escolha um caminho:\n");
-        if (atual->esquerda != NULL) printf(" - (e) Ir para a esquerda -> %s\n", atual->esquerda->nome);
-        if (atual->direita != NULL)  printf(" - (d) Ir para a direita  -> %s\n", atual->direita->nome);
+        printf("\nEscolha um caminho:\n");
+        if (atual->esquerda != NULL)
+            printf(" - (e) Ir para a esquerda -> %s\n", atual->esquerda->nome);
+        if (atual->direita != NULL)
+            printf(" - (d) Ir para a direita  -> %s\n", atual->direita->nome);
         printf(" - (s) Sair da exploração\n");
         printf("Sua escolha: ");
         scanf(" %c", &escolha);
@@ -64,11 +66,22 @@ void explorarSalas(Sala *atual) {
 }
 
 // ----------------------
+// Função: liberarMemoria()
+// Libera recursivamente toda a memória alocada para as salas
+// ----------------------
+void liberarMemoria(Sala *raiz) {
+    if (raiz == NULL) return;
+    liberarMemoria(raiz->esquerda);
+    liberarMemoria(raiz->direita);
+    free(raiz);
+}
+
+// ----------------------
 // Função principal: main()
 // Monta o mapa fixo da mansão e inicia a exploração
 // ----------------------
 int main() {
-    // Criação das salas (nós)
+    // Criação das salas (nós da árvore)
     Sala *hall = criarSala("Hall de Entrada");
     Sala *salaEstar = criarSala("Sala de Estar");
     Sala *cozinha = criarSala("Cozinha");
@@ -77,7 +90,7 @@ int main() {
     Sala *despensa = criarSala("Despensa");
     Sala *escritorio = criarSala("Escritório");
 
-    // Conexões (estrutura da árvore)
+    // Conexões entre as salas (estrutura da árvore)
     hall->esquerda = salaEstar;
     hall->direita = cozinha;
     salaEstar->esquerda = biblioteca;
@@ -86,17 +99,13 @@ int main() {
     cozinha->direita = escritorio;
 
     // Início da exploração
-    printf("=== Detective Quest: Exploração da Mansão ===\n");
+    printf("============================================\n");
+    printf("  DETECTIVE QUEST - Exploração da Mansão\n");
+    printf("============================================\n");
     explorarSalas(hall);
 
-    // Liberação da memória (boa prática)
-    free(biblioteca);
-    free(jardim);
-    free(salaEstar);
-    free(despensa);
-    free(escritorio);
-    free(cozinha);
-    free(hall);
+    // Liberação da memória
+    liberarMemoria(hall);
 
     printf("\nExploração encerrada. Obrigado por jogar!\n");
     return 0;
